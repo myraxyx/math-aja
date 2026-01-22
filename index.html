@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Graduation Equation - Math RPG</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .game-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .game-header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            border: 2px solid #0f3460;
+            box-shadow: 0 0 15px rgba(79, 195, 247, 0.3);
+        }
+        
+        .game-header h1 {
+            color: #4fc3f7;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+        }
+        
+        .game-header p {
+            font-size: 1.2rem;
+            color: #bbbbbb;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .game-body {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .main-content {
+            flex: 3;
+            min-width: 300px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #0f3460;
+        }
+        
+        .side-panel {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .panel {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #0f3460;
+        }
+        
+        .panel h2 {
+            color: #4fc3f7;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #0f3460;
+        }
+        
+        .character-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .stat-bar {
+            background: #0f3460;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+        
+        .stat-fill {
+            height: 100%;
+            background: #4fc3f7;
+            transition: width 0.5s;
+        }
+        
+        .stat-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+        
+        .npc-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .npc-item {
+            background: rgba(15, 52, 96, 0.3);
+            padding: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .npc-item:hover {
+            background: rgba(15, 52, 96, 0.6);
+            cursor: pointer;
+        }
+        
+        .affinity-bar {
+            width: 60px;
+            height: 8px;
+            background: #0f3460;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .affinity-fill {
+            height: 100%;
+            background: #e91e63;
+        }
+        
+        .location-container {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #0f3460;
+        }
+        
+        .location-name {
+            font-size: 1.5rem;
+            color: #4fc3f7;
+            margin-bottom: 10px;
+        }
+        
+        .location-description {
+            color: #cccccc;
+            line-height: 1.5;
+        }
+        
+        .interaction-container {
+            margin-top: 20px;
+        }
+        
+        .dialogue-box {
+            background: rgba(15, 52, 96, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            min-height: 100px;
+            line-height: 1.6;
+        }
+        
+        .dialogue-speaker {
+            color: #e91e63;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .option-btn {
+            background: #0f3460;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .option-btn:hover {
+            background: #4fc3f7;
+            color: #0a1931;
+            transform: translateY(-2px);
+        }
+        
+        .math-problem {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #4fc3f7;
+        }
+        
+        .problem-text {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+        
+        .answer-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .submit-btn {
+            background: #4fc3f7;
+            color: #0a1931;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: #29b6f6;
+            transform: translateY(-2px);
+        }
+        
+        .result-message {
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .success {
+            background: rgba(76, 175, 80, 0.2);
+            color: #81c784;
+            border: 1px solid #4caf50;
+        }
+        
+        .error {
+            background: rgba(244, 67, 54, 0.2);
+            color: #ef9a9a;
+            border: 1px solid #f44336;
+        }
+        
+        .game-footer {
+            text-align: center;
+            padding: 15px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        .day-counter {
+            font-size: 1.2rem;
+            color: #4fc3f7;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .competition-info {
+            background: rgba(233, 30, 99, 0.1);
+            border: 1px solid #e91e63;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .game-body {
+                flex-direction: column;
+            }
+            
+            .game-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1>The Graduation Equation</h1>
+            <p>You're Alex, a high school student who never paid attention in math class. Your teacher entered you in the State Math Competition - if you want to graduate, you must win! You have one week to learn enough math to compete. Talk to NPCs, form study groups, and overcome obstacles to reach your goal.</p>
+            <div class="day-counter">Day: <span id="day-count">1</span>/7 | Time: <span id="time-of-day">Morning</span></div>
+        </div>
+        
+        <div class="game-body">
+            <div class="main-content">
+                <div class="location-container">
+                    <div class="location-name" id="location-name">School Hallway</div>
+                    <div class="location-description" id="location-description">You're standing in the school hallway between classes. You can see your math classroom down the hall, the library to your right, and the cafeteria further down.</div>
+                </div>
+                
+                <div class="interaction-container">
+                    <div class="dialogue-box">
+                        <div class="dialogue-speaker" id="speaker-name">Narrator</div>
+                        <div id="dialogue-text">Welcome to "The Graduation Equation"! You're Alex, and you've been entered into the State Math Competition by your teacher, Mr. Johnson. You have one week to prepare. Talk to NPCs, study math problems, and form friendships to increase your chances of winning. Click on NPCs in the side panel to interact with them, or use the movement buttons to change locations.</div>
+                    </div>
+                    
+                    <div id="math-problem-container" style="display: none;">
+                        <div class="math-problem">
+                            <div class="problem-text" id="problem-text">What is 15 + 27?</div>
+                            <input type="number" class="answer-input" id="answer-input" placeholder="Enter your answer...">
+                            <button class="submit-btn" id="submit-answer">Submit Answer</button>
+                            <div id="result-message" class="result-message"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="options-container" id="options-container">
+                        <!-- Options will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="side-panel">
+                <div class="panel">
+                    <h2>Character Stats</h2>
+                    <div class="character-info">
+                        <div class="stat-label">
+                            <span>Math Skill</span>
+                            <span id="math-skill-value">10/100</span>
+                        </div>
+                        <div class="stat-bar">
+                            <div class="stat-fill" id="math-skill-bar" style="width: 10%;"></div>
+                        </div>
+                        
+                        <div class="stat-label">
+                            <span>Confidence</span>
+                            <span id="confidence-value">15/100</span>
+                        </div>
+                        <div class="stat-bar">
+                            <div class="stat-fill" id="confidence-bar" style="width: 15%;"></div>
+                        </div>
+                        
+                        <div class="stat-label">
+                            <span>Energy</span>
+                            <span id="energy-value">80/100</span>
+                        </div>
+                        <div class="stat-bar">
+                            <div class="stat-fill" id="energy-bar" style="width: 80%;"></div>
+                        </div>
+                        
+                        <div class="stat-label">
+                            <span>Days Remaining</span>
+                            <span id="days-remaining">6</span>
+                        </div>
+                        
+                        <div class="competition-info">
+                            <strong>Math Competition:</strong> <span id="competition-status">7 days away</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel">
+                    <h2>NPC Relationships</h2>
+                    <div class="npc-list" id="npc-list">
+                        <!-- NPCs will be dynamically inserted here -->
+                    </div>
+                </div>
+                
+                <div class="panel">
+                    <h2>Locations</h2>
+                    <div class="options-container">
+                        <button class="option-btn location-btn" data-location="school">School Hallway</button>
+                        <button class="option-btn location-btn" data-location="classroom">Math Classroom</button>
+                        <button class="option-btn location-btn" data-location="library">Library</button>
+                        <button class="option-btn location-btn" data-location="cafeteria">Cafeteria</button>
+                        <button class="option-btn location-btn" data-location="park">City Park</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-footer">
+            The Graduation Equation - An RPG about learning, self-growth, and friendship | Use your mouse to interact with the game
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        const gameState = {
+            day: 1,
+            timeOfDay: 'Morning',
+            timeIndex: 0, // 0: Morning, 1: Afternoon, 2: Evening
+            locations: {
+                school: {
+                    name: 'School Hallway',
+                    description: 'You\'re standing in the school hallway between classes. You can see your math classroom down the hall, the library to your right, and the cafeteria further down.'
+                },
+                classroom: {
+                    name: 'Math Classroom',
+                    description: 'Your math classroom. The whiteboard is covered in equations from the last class. Mr. Johnson\'s desk is neat and organized.'
+                },
+                library: {
+                    name: 'School Library',
+                    description: 'A quiet space with books lining the walls. Several students are studying at tables. You see Sarah at a table in the back.'
+                },
+                cafeteria: {
+                    name: 'School Cafeteria',
+                    description: 'The noisy cafeteria. You see Mike sitting alone at a table. The popular kids are laughing loudly in the corner.'
+                },
+                park: {
+                    name: 'City Park',
+                    description: 'A peaceful park near your school. You sometimes come here to clear your head. You see Emma reading on a bench.'
+                }
+            },
+            currentLocation: 'school',
+            mathSkill: 10,
+            confidence: 15,
+            energy: 80,
+            npcs: [
+                {
+                    id: 'mr_johnson',
+                    name: 'Mr. Johnson',
+                    affinity: 20,
+                    description: 'Your math teacher. He believes in your potential.',
+                    location: 'classroom',
+                    dialogues: {
+                        lowAffinity: [
+                            "Alex, I entered you in the competition because I believe you can do better than you think.",
+                            "You need to start with the basics. Let's go over addition and subtraction."
+                        ],
+                        mediumAffinity: [
+                            "I see you're making progress. Let's work on multiplication and division today.",
+                            "Remember, math is about practice. The more problems you solve, the better you'll get."
+                        ],
+                        highAffinity: [
+                            "You've come so far, Alex! Today we'll work on algebra problems.",
+                            "I'm proud of how much effort you're putting in. Keep it up!"
+                        ]
+                    }
+                },
+                {
+                    id: 'sarah',
+                    name: 'Sarah',
+                    affinity: 10,
+                    description: 'The smartest student in class. She\'s quiet but helpful.',
+                    location: 'library',
+                    dialogues: {
+                        lowAffinity: [
+                            "Oh, hi Alex. I heard about the competition. Good luck, I guess.",
+                            "If you need help, I'm usually here in the library after school."
+                        ],
+                        mediumAffinity: [
+                            "I see you're actually trying. That's good. Want me to explain fractions?",
+                            "We could study together sometime if you want."
+                        ],
+                        highAffinity: [
+                            "Alex, you're really improving! Let's form a study group with Mike.",
+                            "I never thought I'd say this, but you might actually have a chance at the competition."
+                        ]
+                    }
+                },
+                {
+                    id: 'mike',
+                    name: 'Mike',
+                    affinity: 25,
+                    description: 'Your best friend. Not great at math but supportive.',
+                    location: 'cafeteria',
+                    dialogues: {
+                        lowAffinity: [
+                            "Dude, you got entered in the math competition? That's rough.",
+                            "I'm terrible at math too, but I'll try to help if you want."
+                        ],
+                        mediumAffinity: [
+                            "Hey, you're actually studying! Proud of you, man.",
+                            "Let's grab pizza after school and you can teach me what you learned."
+                        ],
+                        highAffinity: [
+                            "You're becoming a math whiz! Sarah said you helped her with a problem!",
+                            "Our study group is actually working. Who would've thought?"
+                        ]
+                    }
+                },
+                {
+                    id: 'emma',
+                    name: 'Emma',
+                    affinity: 5,
+                    description: 'A friendly student from another class. Good at math.',
+                    location: 'park',
+                    dialogues: {
+                        lowAffinity: [
+                            "Hi, I'm Emma. I see you're struggling with math. Want some help?",
+                            "I like coming to the park to study. It's peaceful here."
+                        ],
+                        mediumAffinity: [
+                            "You're getting better! Geometry can be tricky, but you're picking it up.",
+                            "I heard about the bullies. Don't let them get to you."
+                        ],
+                        highAffinity: [
+                            "Alex, you should join our study group! We meet at the library on Fridays.",
+                            "You've improved so much! I'm rooting for you in the competition."
+                        ]
+                    }
+                },
+                {
+                    id: 'jake',
+                    name: 'Jake',
+                    affinity: -10,
+                    description: 'The class bully. He likes to pick on you.',
+                    location: 'school',
+                    dialogues: {
+                        lowAffinity: [
+                            "Well, well, if it isn't the math genius. Ready to fail the competition?",
+                            "Why are you even trying? You're going to embarrass the whole school."
+                        ],
+                        mediumAffinity: [
+                            "Still studying? You're wasting your time.",
+                            "I heard Mr. Johnson is just pitying you. He doesn't actually think you can win."
+                        ],
+                        highAffinity: [
+                            "Okay, I admit it. You're actually trying. Still don't think you'll win though.",
+                            "Fine, you're not as dumb as I thought. But stay away from Sarah."
+                        ]
+                    }
+                }
+            ],
+            studyGroupFormed: false,
+            competitionDay: 7,
+            competitionQuestions: [],
+            competitionCompleted: false,
+            gameEnded: false
+        };
+
+        // Math problems by difficulty level
+        const mathProblems = {
+            easy: [
+                { problem: "What is 15 + 27?", answer: 42 },
+                { problem: "What is 48 - 19?", answer: 29 },
+                { problem: "What is 6 × 7?", answer: 42 },
+                { problem: "What is 63 ÷ 9?", answer: 7 },
+                { problem: "What is 1/4 + 1/2?", answer: 0.75 }
+            ],
+            medium: [
+                { problem: "What is 3² + 4²?", answer: 25 },
+                { problem: "Solve for x: 2x + 5 = 17", answer: 6 },
+                { problem: "What is 30% of 250?", answer: 75 },
+                { problem: "What is the area of a rectangle with length 8 and width 5?", answer: 40 },
+                { problem: "What is 7 × 8 - 12 ÷ 3?", answer: 52 }
+            ],
+            hard: [
+                { problem: "Solve for x: 3x² - 12 = 0", answer: 2 },
+                { problem: "What is the slope of the line passing through (2,3) and (4,7)?", answer: 2 },
+                { problem: "Simplify: (2x³y²)³", answer: "8x^9y^6" },
+                { problem: "What is the next number in the sequence: 2, 6, 12, 20, 30?", answer: 42 },
+                { problem: "If a triangle has angles of 45° and 75°, what is the third angle?", answer: 60 }
+            ]
+        };
+
+        // DOM Elements
+        const dayCountEl = document.getElementById('day-count');
+        const timeOfDayEl = document.getElementById('time-of-day');
+        const locationNameEl = document.getElementById('location-name');
+        const locationDescriptionEl = document.getElementById('location-description');
+        const speakerNameEl = document.getElementById('speaker-name');
+        const dialogueTextEl = document.getElementById('dialogue-text');
+        const optionsContainerEl = document.getElementById('options-container');
+        const mathProblemContainerEl = document.getElementById('math-problem-container');
+        const problemTextEl = document.getElementById('problem-text');
+        const answerInputEl = document.getElementById('answer-input');
+        const submitAnswerBtn = document.getElementById('submit-answer');
+        const resultMessageEl = document.getElementById('result-message');
+        const mathSkillValueEl = document.getElementById('math-skill-value');
+        const mathSkillBarEl = document.getElementById('math-skill-bar');
+        const confidenceValueEl = document.getElementById('confidence-value');
+        const confidenceBarEl = document.getElementById('confidence-bar');
+        const energyValueEl = document.getElementById('energy-value');
+        const energyBarEl = document.getElementById('energy-bar');
+        const daysRemainingEl = document.getElementById('days-remaining');
+        const competitionStatusEl = document.getElementById('competition-status');
+        const npcListEl = document.getElementById('npc-list');
+
+        // Initialize game
+        function initGame() {
+            updateDisplay();
+            showMainOptions();
+            updateNPCList();
+            
+            // Event listeners
+            submitAnswerBtn.addEventListener('click', checkAnswer);
+            answerInputEl.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') checkAnswer();
+            });
+            
+            // Location buttons
+            document.querySelectorAll('.location-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const location = this.getAttribute('data-location');
+                    moveToLocation(location);
+                });
+            });
+            
+            // Initial dialogue
+            showDialogue('Narrator', 'Welcome to "The Graduation Equation"! You\'re Alex, and you\'ve been entered into the State Math Competition by your teacher, Mr. Johnson. You have one week to prepare. Talk to NPCs, study math problems, and form friendships to increase your chances of winning. Click on NPCs in the side panel to interact with them, or use the movement buttons to change locations.');
+        }
+
+        // Update all display elements
+        function updateDisplay() {
+            // Update day and time
+            dayCountEl.textContent = gameState.day;
+            timeOfDayEl.textContent = gameState.timeOfDay;
+            
+            // Update location
+            const location = gameState.locations[gameState.currentLocation];
+            locationNameEl.textContent = location.name;
+            locationDescriptionEl.textContent = location.description;
+            
+            // Update stats
+            mathSkillValueEl.textContent = `${gameState.mathSkill}/100`;
+            mathSkillBarEl.style.width = `${gameState.mathSkill}%`;
+            
+            confidenceValueEl.textContent = `${gameState.confidence}/100`;
+            confidenceBarEl.style.width = `${gameState.confidence}%`;
+            
+            energyValueEl.textContent = `${gameState.energy}/100`;
+            energyBarEl.style.width = `${gameState.energy}%`;
+            
+            // Update days remaining
+            const daysRemaining = gameState.competitionDay - gameState.day;
+            daysRemainingEl.textContent = daysRemaining;
+            
+            // Update competition status
+            if (gameState.day < gameState.competitionDay) {
+                competitionStatusEl.textContent = `${daysRemaining} day${daysRemaining !== 1 ? 's' : ''} away`;
+            } else if (gameState.day === gameState.competitionDay && !gameState.competitionCompleted) {
+                competitionStatusEl.textContent = "Today!";
+            } else if (gameState.competitionCompleted) {
+                competitionStatusEl.textContent = "Completed";
+            }
+        }
+
+        // Update NPC list in side panel
+        function updateNPCList() {
+            npcListEl.innerHTML = '';
+            
+            // Get NPCs in current location
+            const currentNPCs = gameState.npcs.filter(npc => 
+                npc.location === gameState.currentLocation || npc.id === 'jake'
+            );
+            
+            currentNPCs.forEach(npc => {
+                const npcItem = document.createElement('div');
+                npcItem.className = 'npc-item';
+                npcItem.innerHTML = `
+                    <div>
+                        <strong>${npc.name}</strong><br>
+                        <small>${npc.description}</small>
+                    </div>
+                    <div class="affinity-bar">
+                        <div class="affinity-fill" style="width: ${Math.max(0, npc.affinity)}%;"></div>
+                    </div>
+                `;
+                
+                npcItem.addEventListener('click', () => interactWithNPC(npc.id));
+                npcListEl.appendChild(npcItem);
+            });
+            
+            // If no NPCs in location, show message
+            if (currentNPCs.length === 0) {
+                const noNpcItem = document.createElement('div');
+                noNpcItem.className = 'npc-item';
+                noNpcItem.innerHTML = '<em>No NPCs in this location</em>';
+                npcListEl.appendChild(noNpcItem);
+            }
+        }
+
+        // Show dialogue
+        function showDialogue(speaker, text) {
+            speakerNameEl.textContent = speaker;
+            dialogueTextEl.textContent = text;
+        }
+
+        // Show main options based on current location and game state
+        function showMainOptions() {
+            optionsContainerEl.innerHTML = '';
+            
+            // If it's competition day, show competition
+            if (gameState.day === gameState.competitionDay && !gameState.competitionCompleted) {
+                startCompetition();
+                return;
+            }
+            
+            // If game ended, show ending options
+            if (gameState.gameEnded) {
+                showEndingOptions();
+                return;
+            }
+            
+            // Regular options
+            const options = [
+                { text: 'Study Math', action: startStudying },
+                { text: 'Advance Time', action: advanceTime },
+                { text: 'Check Stats', action: checkStats }
+            ];
+            
+            // Add NPC-specific options
+            const currentNPCs = gameState.npcs.filter(npc => 
+                npc.location === gameState.currentLocation || npc.id === 'jake'
+            );
+            
+            currentNPCs.forEach(npc => {
+                options.push({
+                    text: `Talk to ${npc.name}`,
+                    action: () => interactWithNPC(npc.id)
+                });
+                
+                // Add study with NPC option if affinity is high enough
+                if (npc.affinity >= 25 && npc.id !== 'jake') {
+                    options.push({
+                        text: `Study with ${npc.name}`,
+                        action: () => studyWithNPC(npc.id)
+                    });
+                }
+                
+                // Add hang out option if affinity is high enough
+                if (npc.affinity >= 50 && npc.id !== 'jake') {
+                    options.push({
+                        text: `Hang out with ${npc.name}`,
+                        action: () => hangOutWithNPC(npc.id)
+                    });
+                }
+            });
+            
+            // Add form study group option if conditions met
+            const highAffinityNPCs = gameState.npcs.filter(npc => 
+                npc.affinity >= 50 && npc.id !== 'jake'
+            );
+            
+            if (highAffinityNPCs.length >= 3 && !gameState.studyGroupFormed) {
+                options.push({
+                    text: 'Form Study Group',
+                    action: formStudyGroup
+                });
+            }
+            
+            // Render options
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option.text;
+                button.addEventListener('click', option.action);
+                optionsContainerEl.appendChild(button);
+            });
+        }
+
+        // Move to a different location
+        function moveToLocation(locationId) {
+            gameState.currentLocation = locationId;
+            updateDisplay();
+            updateNPCList();
+            
+            // Check for random events
+            const randomEvent = Math.random();
+            if (randomEvent < 0.2) {
+                // 20% chance of encountering Jake when moving
+                if (locationId === 'school' || locationId === 'cafeteria') {
+                    showDialogue('Jake', 'Look who it is! Still trying to learn math? Give up already!');
+                    gameState.confidence = Math.max(0, gameState.confidence - 5);
+                    updateDisplay();
+                }
+            }
+            
+            showMainOptions();
+        }
+
+        // Interact with an NPC
+        function interactWithNPC(npcId) {
+            const npc = gameState.npcs.find(n => n.id === npcId);
+            if (!npc) return;
+            
+            // Determine which dialogue to show based on affinity
+            let dialogueSet;
+            if (npc.affinity < 25) dialogueSet = npc.dialogues.lowAffinity;
+            else if (npc.affinity < 50) dialogueSet = npc.dialogues.mediumAffinity;
+            else dialogueSet = npc.dialogues.highAffinity;
+            
+            const randomDialogue = dialogueSet[Math.floor(Math.random() * dialogueSet.length)];
+            showDialogue(npc.name, randomDialogue);
+            
+            // Increase affinity (except for Jake)
+            if (npcId !== 'jake') {
+                npc.affinity = Math.min(100, npc.affinity + 5);
+            } else {
+                // Jake's affinity can increase slightly if player is doing well
+                if (gameState.mathSkill > 50) {
+                    npc.affinity = Math.min(0, npc.affinity + 2);
+                }
+            }
+            
+            // Update display and options
+            updateNPCList();
+            showMainOptions();
+        }
+
+        // Study with an NPC
+        function studyWithNPC(npcId) {
+            const npc = gameState.npcs.find(n => n.id === npcId);
+            if (!npc || npc.affinity < 25) return;
+            
+            showDialogue(npc.name, "Let's study together! Here's a problem for you to solve.");
+            
+            // Show a math problem
+            showMathProblem();
+            
+            // Increase affinity
+            npc.affinity = Math.min(100, npc.affinity + 3);
+            updateNPCList();
+        }
+
+        // Hang out with an NPC
+        function hangOutWithNPC(npcId) {
+            const npc = gameState.npcs.find(n => n.id === npcId);
+            if (!npc || npc.affinity < 50) return;
+            
+            showDialogue(npc.name, "Thanks for hanging out with me! This is fun. Let's get back to studying tomorrow.");
+            
+            // Increase confidence and affinity
+            gameState.confidence = Math.min(100, gameState.confidence + 10);
+            npc.affinity = Math.min(100, npc.affinity + 5);
+            
+            // Use energy
+            gameState.energy = Math.max(0, gameState.energy - 15);
+            
+            updateDisplay();
+            updateNPCList();
+            showMainOptions();
+        }
+
+        // Form a study group
+        function formStudyGroup() {
+            const highAffinityNPCs = gameState.npcs.filter(npc => 
+                npc.affinity >= 50 && npc.id !== 'jake'
+            );
+            
+            if (highAffinityNPCs.length < 3) return;
+            
+            gameState.studyGroupFormed = true;
+            showDialogue('Sarah', "Our study group is working really well! We should meet every day. This will really boost our math skills!");
+            
+            // Boost math skill significantly
+            gameState.mathSkill = Math.min(100, gameState.mathSkill + 20);
+            gameState.confidence = Math.min(100, gameState.confidence + 15);
+            
+            updateDisplay();
+            showMainOptions();
+        }
+
+        // Start studying (solo)
+        function startStudying() {
+            showDialogue('Narrator', 'You open your math textbook and start studying. Practice makes perfect!');
+            showMathProblem();
+        }
+
+        // Show a math problem
+        function showMathProblem() {
+            // Determine problem difficulty based on math skill
+            let difficulty;
+            if (gameState.mathSkill < 30) difficulty = 'easy';
+            else if (gameState.mathSkill < 70) difficulty = 'medium';
+            else difficulty = 'hard';
+            
+            const problems = mathProblems[difficulty];
+            const randomProblem = problems[Math.floor(Math.random() * problems.length)];
+            
+            // Store current problem for checking
+            window.currentProblem = randomProblem;
+            
+            // Show problem UI
+            problemTextEl.textContent = randomProblem.problem;
+            answerInputEl.value = '';
+            resultMessageEl.textContent = '';
+            resultMessageEl.className = 'result-message';
+            mathProblemContainerEl.style.display = 'block';
+            
+            // Hide other options
+            optionsContainerEl.innerHTML = '';
+            
+            // Add cancel option
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'option-btn';
+            cancelBtn.textContent = 'Cancel';
+            cancelBtn.addEventListener('click', () => {
+                mathProblemContainerEl.style.display = 'none';
+                showMainOptions();
+            });
+            optionsContainerEl.appendChild(cancelBtn);
+        }
+
+        // Check answer to math problem
+        function checkAnswer() {
+            const userAnswer = answerInputEl.value.trim();
+            const correctAnswer = window.currentProblem.answer.toString();
+            
+            // Check if answer is correct (allow for numeric equivalence)
+            let isCorrect = false;
+            if (!isNaN(userAnswer) && !isNaN(correctAnswer)) {
+                // Both are numeric
+                isCorrect = Math.abs(parseFloat(userAnswer) - parseFloat(correctAnswer)) < 0.001;
+            } else {
+                // String comparison
+                isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
+            }
+            
+            if (isCorrect) {
+                resultMessageEl.textContent = 'Correct! Well done!';
+                resultMessageEl.className = 'result-message success';
+                
+                // Increase stats
+                gameState.mathSkill = Math.min(100, gameState.mathSkill + 5);
+                gameState.confidence = Math.min(100, gameState.confidence + 3);
+                
+                // Use energy
+                gameState.energy = Math.max(0, gameState.energy - 10);
+            } else {
+                resultMessageEl.textContent = `Incorrect. The answer is ${window.currentProblem.answer}.`;
+                resultMessageEl.className = 'result-message error';
+                
+                // Still gain a little skill from trying
+                gameState.mathSkill = Math.min(100, gameState.mathSkill + 1);
+                
+                // Lose a little confidence
+                gameState.confidence = Math.max(0, gameState.confidence - 2);
+                
+                // Use energy
+                gameState.energy = Math.max(0, gameState.energy - 5);
+            }
+            
+            updateDisplay();
+            
+            // After 2 seconds, hide problem and show options again
+            setTimeout(() => {
+                mathProblemContainerEl.style.display = 'none';
+                showMainOptions();
+            }, 2000);
+        }
+
+        // Advance time
+        function advanceTime() {
+            // Advance time of day
+            gameState.timeIndex = (gameState.timeIndex + 1) % 3;
+            
+            // Set time of day string
+            const times = ['Morning', 'Afternoon', 'Evening'];
+            gameState.timeOfDay = times[gameState.timeIndex];
+            
+            // If we've cycled through all times, advance a day
+            if (gameState.timeIndex === 0) {
+                gameState.day++;
+                
+                // Replenish some energy
+                gameState.energy = Math.min(100, gameState.energy + 40);
+                
+                // Random events
+                const randomEvent = Math.random();
+                if (randomEvent < 0.3 && gameState.day < gameState.competitionDay) {
+                    // Bully event
+                    showDialogue('Jake', 'I hid your math textbook. Good luck studying without it!');
+                    gameState.confidence = Math.max(0, gameState.confidence - 10);
+                } else if (randomEvent < 0.5 && gameState.day < gameState.competitionDay) {
+                    // Positive event
+                    showDialogue('Mr. Johnson', 'I noticed your improvement. Keep up the good work!');
+                    gameState.confidence = Math.min(100, gameState.confidence + 10);
+                }
+                
+                // Check if it's competition day
+                if (gameState.day === gameState.competitionDay) {
+                    showDialogue('Narrator', 'Today is the day of the math competition! You need to head to the competition hall.');
+                }
+            }
+            
+            updateDisplay();
+            showMainOptions();
+        }
+
+        // Check stats
+        function checkStats() {
+            let statsMessage = `Math Skill: ${gameState.mathSkill}/100\n`;
+            statsMessage += `Confidence: ${gameState.confidence}/100\n`;
+            statsMessage += `Energy: ${gameState.energy}/100\n`;
+            statsMessage += `Day: ${gameState.day} of 7\n`;
+            statsMessage += `Time: ${gameState.timeOfDay}\n\n`;
+            
+            // Study group status
+            if (gameState.studyGroupFormed) {
+                statsMessage += "✅ You have formed a study group!\n";
+            } else {
+                const highAffinityNPCs = gameState.npcs.filter(npc => 
+                    npc.affinity >= 50 && npc.id !== 'jake'
+                );
+                statsMessage += `You need ${3 - highAffinityNPCs.length} more friends with 50+ affinity to form a study group.\n`;
+            }
+            
+            // NPC affinities
+            statsMessage += "\nNPC Affinities:\n";
+            gameState.npcs.forEach(npc => {
+                if (npc.id !== 'jake') {
+                    let status = "Acquaintance";
+                    if (npc.affinity >= 25) status = "Study Buddy";
+                    if (npc.affinity >= 50) status = "Friend";
+                    if (npc.affinity >= 100) status = "Best Friend";
+                    
+                    statsMessage += `${npc.name}: ${npc.affinity}% (${status})\n`;
+                }
+            });
+            
+            showDialogue('Stats', statsMessage);
+            showMainOptions();
+        }
+
+        // Start the competition
+        function startCompetition() {
+            showDialogue('Narrator', 'You arrive at the competition hall. The room is filled with students from other schools. You take a deep breath and sit at your assigned desk. The competition is about to begin!');
+            
+            // Generate competition questions based on player's math skill
+            generateCompetitionQuestions();
+            
+            // Show first question after a delay
+            setTimeout(() => {
+                showCompetitionQuestion(0);
+            }, 3000);
+        }
+
+        // Generate competition questions
+        function generateCompetitionQuestions() {
+            gameState.competitionQuestions = [];
+            const questionCount = 7; // 7 questions for the competition
+            
+            // Determine difficulty distribution based on player's math skill
+            let easyCount, mediumCount, hardCount;
+            
+            if (gameState.mathSkill < 40) {
+                easyCount = 4;
+                mediumCount = 2;
+                hardCount = 1;
+            } else if (gameState.mathSkill < 70) {
+                easyCount = 2;
+                mediumCount = 3;
+                hardCount = 2;
+            } else {
+                easyCount = 1;
+                mediumCount = 3;
+                hardCount = 3;
+            }
+            
+            // Add questions from each difficulty
+            for (let i = 0; i < easyCount && gameState.competitionQuestions.length < questionCount; i++) {
+                const problem = mathProblems.easy[Math.floor(Math.random() * mathProblems.easy.length)];
+                gameState.competitionQuestions.push({
+                    ...problem,
+                    difficulty: 'easy',
+                    answered: false,
+                    correct: false
+                });
+            }
+            
+            for (let i = 0; i < mediumCount && gameState.competitionQuestions.length < questionCount; i++) {
+                const problem = mathProblems.medium[Math.floor(Math.random() * mathProblems.medium.length)];
+                gameState.competitionQuestions.push({
+                    ...problem,
+                    difficulty: 'medium',
+                    answered: false,
+                    correct: false
+                });
+            }
+            
+            for (let i = 0; i < hardCount && gameState.competitionQuestions.length < questionCount; i++) {
+                const problem = mathProblems.hard[Math.floor(Math.random() * mathProblems.hard.length)];
+                gameState.competitionQuestions.push({
+                    ...problem,
+                    difficulty: 'hard',
+                    answered: false,
+                    correct: false
+                });
+            }
+            
+            // Shuffle questions
+            gameState.competitionQuestions = gameState.competitionQuestions.sort(() => Math.random() - 0.5);
+        }
+
+        // Show a competition question
+        function showCompetitionQuestion(questionIndex) {
+            if (questionIndex >= gameState.competitionQuestions.length) {
+                endCompetition();
+                return;
+            }
+            
+            const question = gameState.competitionQuestions[questionIndex];
+            window.currentCompetitionQuestionIndex = questionIndex;
+            
+            showDialogue('Competition', `Question ${questionIndex + 1} of ${gameState.competitionQuestions.length} (${question.difficulty}): ${question.problem}`);
+            
+            // Show problem UI
+            problemTextEl.textContent = question.problem;
+            answerInputEl.value = '';
+            resultMessageEl.textContent = '';
+            resultMessageEl.className = 'result-message';
+            mathProblemContainerEl.style.display = 'block';
+            
+            // Hide other options
+            optionsContainerEl.innerHTML = '';
+            
+            // Update submit button for competition
+            submitAnswerBtn.textContent = `Submit Answer (${questionIndex + 1}/${gameState.competitionQuestions.length})`;
+        }
+
+        // Check competition answer
+        function checkCompetitionAnswer() {
+            const questionIndex = window.currentCompetitionQuestionIndex;
+            const question = gameState.competitionQuestions[questionIndex];
+            const userAnswer = answerInputEl.value.trim();
+            const correctAnswer = question.answer.toString();
+            
+            // Check if answer is correct
+            let isCorrect = false;
+            if (!isNaN(userAnswer) && !isNaN(correctAnswer)) {
+                isCorrect = Math.abs(parseFloat(userAnswer) - parseFloat(correctAnswer)) < 0.001;
+            } else {
+                isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
+            }
+            
+            // Mark question as answered
+            question.answered = true;
+            question.correct = isCorrect;
+            
+            if (isCorrect) {
+                resultMessageEl.textContent = 'Correct!';
+                resultMessageEl.className = 'result-message success';
+            } else {
+                resultMessageEl.textContent = `Incorrect. The answer was ${question.answer}.`;
+                resultMessageEl.className = 'result-message error';
+            }
+            
+            // After 2 seconds, show next question or end competition
+            setTimeout(() => {
+                mathProblemContainerEl.style.display = 'none';
+                showCompetitionQuestion(questionIndex + 1);
+            }, 2000);
+        }
+
+        // End competition and show results
+        function endCompetition() {
+            gameState.competitionCompleted = true;
+            
+            // Calculate score
+            const correctCount = gameState.competitionQuestions.filter(q => q.correct).length;
+            const totalQuestions = gameState.competitionQuestions.length;
+            const scorePercent = Math.round((correctCount / totalQuestions) * 100);
+            
+            // Determine if player wins
+            const winThreshold = 70; // Need 70% to win
+            const winsCompetition = scorePercent >= winThreshold;
+            
+            // Show results
+            let resultsMessage = `Competition Results:\n`;
+            resultsMessage += `You answered ${correctCount} out of ${totalQuestions} questions correctly (${scorePercent}%).\n\n`;
+            
+            if (winsCompetition) {
+                resultsMessage += `🎉 Congratulations! You won the competition!\n`;
+                resultsMessage += `Mr. Johnson is proud of you, and you've proven to everyone (including yourself) that you can do it.\n`;
+                resultsMessage += `You graduate with honors and even get a scholarship for your efforts!`;
+            } else {
+                resultsMessage += `You didn't win the competition, but you showed tremendous improvement.\n`;
+                resultsMessage += `Mr. Johnson acknowledges your effort and decides to let you graduate anyway.\n`;
+                resultsMessage += `You may not have won, but you learned the value of hard work and friendship.`;
+            }
+            
+            showDialogue('Competition Results', resultsMessage);
+            
+            // Update game state
+            gameState.gameEnded = true;
+            
+            // Update submit button to check competition answers
+            submitAnswerBtn.removeEventListener('click', checkAnswer);
+            submitAnswerBtn.addEventListener('click', checkCompetitionAnswer);
+            
+            // Show ending options
+            setTimeout(() => {
+                showEndingOptions();
+            }, 5000);
+        }
+
+        // Show ending options
+        function showEndingOptions() {
+            optionsContainerEl.innerHTML = '';
+            
+            const restartBtn = document.createElement('button');
+            restartBtn.className = 'option-btn';
+            restartBtn.textContent = 'Play Again';
+            restartBtn.addEventListener('click', restartGame);
+            optionsContainerEl.appendChild(restartBtn);
+            
+            const statsBtn = document.createElement('button');
+            statsBtn.className = 'option-btn';
+            statsBtn.textContent = 'View Final Stats';
+            statsBtn.addEventListener('click', showFinalStats);
+            optionsContainerEl.appendChild(statsBtn);
+        }
+
+        // Show final stats
+        function showFinalStats() {
+            // Calculate competition score
+            const correctCount = gameState.competitionQuestions.filter(q => q.correct).length;
+            const totalQuestions = gameState.competitionQuestions.length;
+            const scorePercent = Math.round((correctCount / totalQuestions) * 100);
+            
+            let statsMessage = `FINAL STATS\n`;
+            statsMessage += `====================\n`;
+            statsMessage += `Final Math Skill: ${gameState.mathSkill}/100\n`;
+            statsMessage += `Final Confidence: ${gameState.confidence}/100\n`;
+            statsMessage += `Competition Score: ${correctCount}/${totalQuestions} (${scorePercent}%)\n\n`;
+            
+            statsMessage += `NPC Relationships:\n`;
+            gameState.npcs.forEach(npc => {
+                if (npc.id !== 'jake') {
+                    let status = "Acquaintance";
+                    if (npc.affinity >= 25) status = "Study Buddy";
+                    if (npc.affinity >= 50) status = "Friend";
+                    if (npc.affinity >= 100) status = "Best Friend";
+                    
+                    statsMessage += `${npc.name}: ${npc.affinity}% (${status})\n`;
+                }
+            });
+            
+            statsMessage += `\nStudy Group Formed: ${gameState.studyGroupFormed ? 'Yes' : 'No'}\n`;
+            
+            // Determine ending
+            const winThreshold = 70;
+            const winsCompetition = scorePercent >= winThreshold;
+            
+            if (winsCompetition) {
+                statsMessage += `\nENDING: VICTORY - You won the competition and graduated with honors!`;
+            } else {
+                statsMessage += `\nENDING: MORAL VICTORY - You didn't win but graduated through hard work and growth.`;
+            }
+            
+            showDialogue('Final Stats', statsMessage);
+            showEndingOptions();
+        }
+
+        // Restart the game
+        function restartGame() {
+            // Reset game state
+            gameState.day = 1;
+            gameState.timeOfDay = 'Morning';
+            gameState.timeIndex = 0;
+            gameState.currentLocation = 'school';
+            gameState.mathSkill = 10;
+            gameState.confidence = 15;
+            gameState.energy = 80;
+            gameState.studyGroupFormed = false;
+            gameState.competitionCompleted = false;
+            gameState.gameEnded = false;
+            
+            // Reset NPC affinities
+            gameState.npcs[0].affinity = 20; // Mr. Johnson
+            gameState.npcs[1].affinity = 10; // Sarah
+            gameState.npcs[2].affinity = 25; // Mike
+            gameState.npcs[3].affinity = 5;  // Emma
+            gameState.npcs[4].affinity = -10; // Jake
+            
+            // Reset competition questions
+            gameState.competitionQuestions = [];
+            
+            // Update display and restart
+            updateDisplay();
+            updateNPCList();
+            showDialogue('Narrator', 'Game restarted! You have one week to prepare for the math competition. Good luck!');
+            showMainOptions();
+            
+            // Reset submit button to regular check answer
+            submitAnswerBtn.removeEventListener('click', checkCompetitionAnswer);
+            submitAnswerBtn.addEventListener('click', checkAnswer);
+        }
+
+        // Start the game when page loads
+        window.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
